@@ -1,0 +1,40 @@
+# Development Dockerfile for Backend
+FROM node:18-alpine
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Create app directory
+WORKDIR /app
+
+# Create app user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nodejs -u 1001
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies (including dev dependencies)
+RUN npm ci
+
+# Install nodemon globally for development
+RUN npm install -g nodemon ts-node
+
+# Create necessary directories
+RUN mkdir -p reports temp_files logs
+
+# Copy source code
+COPY . .
+
+# Change ownership to nodejs user
+RUN chown -R nodejs:nodejs /app
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port and debug port
+EXPOSE 5000 9229
+
+# Start application with nodemon for development
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["npm", "run", "dev"]
