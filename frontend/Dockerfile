@@ -38,9 +38,9 @@ RUN chown -R nginx-user:nginx-user /var/cache/nginx
 RUN chown -R nginx-user:nginx-user /var/log/nginx
 RUN chown -R nginx-user:nginx-user /etc/nginx/conf.d
 
-# Create pid file directory
-RUN mkdir -p /var/run/nginx
-RUN chown -R nginx-user:nginx-user /var/run/nginx
+# Create pid file directory and set permissions
+RUN mkdir -p /var/run/nginx /run
+RUN chown -R nginx-user:nginx-user /var/run/nginx /run
 
 # Switch to non-root user
 USER nginx-user
